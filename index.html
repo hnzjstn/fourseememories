@@ -269,6 +269,7 @@
       e.preventDefault();
       const name = document.getElementById("message-name").value;
       const content = document.getElementById("message-content").value;
+
       const div = document.createElement("div");
       div.className = "memory-item";
       div.innerHTML = `<h3>${name}</h3><p>${content}</p>`;
@@ -277,14 +278,21 @@
       const messages = JSON.parse(localStorage.getItem('messages') || '[]');
       messages.push({ name, content });
       localStorage.setItem('messages', JSON.stringify(messages));
+
       this.reset();
     });
 
-    document.getElementById("close-modal").addEventListener("click", () => {
+    document.getElementById("close-modal").addEventListener("click", function() {
       document.getElementById("modal").style.display = "none";
     });
 
-    window.onload = loadData;
+    document.getElementById("modal").addEventListener("click", function(e) {
+      if (e.target === this) {
+        this.style.display = "none";
+      }
+    });
+
+    window.addEventListener("load", loadData);
   </script>
 </body>
 </html>
