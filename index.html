@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BS INFOTECH 4C Yearbook</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -118,6 +119,7 @@
   <nav>
     <a href="#" onclick="showSection('profiles')">Profiles</a>
     <a href="#" onclick="showSection('gallery')">Gallery</a>
+    <a href="#" onclick="downloadYearbook()">Download PDF</a>
   </nav>
 
   <section id="profiles" class="active">
@@ -150,6 +152,22 @@
     function showSection(id) {
       document.querySelectorAll('section').forEach(sec => sec.classList.remove('active'));
       document.getElementById(id).classList.add('active');
+    }
+
+    function downloadYearbook() {
+      const activeSection = document.querySelector("section.active");
+      const clone = activeSection.cloneNode(true);
+      clone.style.display = "block";
+
+      const opt = {
+        margin: 0.5,
+        filename: 'BSINFOTECH-Yearbook.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+
+      html2pdf().set(opt).from(clone).save();
     }
 
     document.getElementById("profile-form").addEventListener("submit", function(e) {
