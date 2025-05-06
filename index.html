@@ -6,7 +6,6 @@
   <title>BS INFOTECH 4C Yearbook</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
-    /* Existing styles remain unchanged */
     * {
       box-sizing: border-box;
     }
@@ -283,15 +282,9 @@
       this.reset();
     });
 
-    document.getElementById("close-modal").onclick = function() {
+    document.getElementById("close-modal").addEventListener("click", function() {
       document.getElementById("modal").style.display = "none";
-    };
-
-    window.onclick = function(e) {
-      if (e.target === document.getElementById("modal")) {
-        document.getElementById("modal").style.display = "none";
-      }
-    };
+    });
 
     window.onload = loadData;
   </script>
