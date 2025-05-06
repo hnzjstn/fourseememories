@@ -6,6 +6,7 @@
   <title>BS INFOTECH 4C Yearbook</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
+    /* Existing styles remain unchanged */
     * {
       box-sizing: border-box;
     }
@@ -181,6 +182,39 @@
       html2pdf().set(opt).from(clone).save();
     }
 
+    function loadData() {
+      const profileData = JSON.parse(localStorage.getItem('profiles') || '[]');
+      const galleryData = JSON.parse(localStorage.getItem('gallery') || '[]');
+      const messagesData = JSON.parse(localStorage.getItem('messages') || '[]');
+
+      profileData.forEach(data => {
+        const div = document.createElement("div");
+        div.className = "profile-card";
+        div.innerHTML = `<img src="${data.photo}" /><h3>${data.name}</h3><p>${data.bio}</p><p><strong>Hobbies:</strong> ${data.hobbies}</p>`;
+        document.getElementById("profile-grid").appendChild(div);
+      });
+
+      galleryData.forEach(src => {
+        const div = document.createElement("div");
+        div.className = "gallery-item";
+        const img = document.createElement("img");
+        img.src = src;
+        img.addEventListener("click", function() {
+          document.getElementById("modal").style.display = "flex";
+          document.getElementById("modal-img").src = src;
+        });
+        div.appendChild(img);
+        document.getElementById("gallery-grid").appendChild(div);
+      });
+
+      messagesData.forEach(msg => {
+        const div = document.createElement("div");
+        div.className = "memory-item";
+        div.innerHTML = `<h3>${msg.name}</h3><p>${msg.content}</p>`;
+        document.getElementById("message-grid").appendChild(div);
+      });
+    }
+
     document.getElementById("profile-form").addEventListener("submit", function(e) {
       e.preventDefault();
       const name = document.getElementById("name").value;
@@ -192,10 +226,15 @@
 
       const reader = new FileReader();
       reader.onload = function() {
+        const photo = reader.result;
         const div = document.createElement("div");
         div.className = "profile-card";
-        div.innerHTML = `<img src="${reader.result}" /><h3>${name}</h3><p>${bio}</p><p><strong>Hobbies:</strong> ${hobbies}</p>`;
+        div.innerHTML = `<img src="${photo}" /><h3>${name}</h3><p>${bio}</p><p><strong>Hobbies:</strong> ${hobbies}</p>`;
         document.getElementById("profile-grid").appendChild(div);
+
+        const profiles = JSON.parse(localStorage.getItem('profiles') || '[]');
+        profiles.push({ name, bio, hobbies, photo });
+        localStorage.setItem('profiles', JSON.stringify(profiles));
       };
       reader.readAsDataURL(file);
       this.reset();
@@ -208,16 +247,21 @@
       Array.from(files).forEach(file => {
         const reader = new FileReader();
         reader.onload = function() {
+          const src = reader.result;
           const div = document.createElement("div");
           div.className = "gallery-item";
           const img = document.createElement("img");
-          img.src = reader.result;
+          img.src = src;
           img.addEventListener("click", function() {
             document.getElementById("modal").style.display = "flex";
-            document.getElementById("modal-img").src = reader.result;
+            document.getElementById("modal-img").src = src;
           });
           div.appendChild(img);
           document.getElementById("gallery-grid").appendChild(div);
+
+          const gallery = JSON.parse(localStorage.getItem('gallery') || '[]');
+          gallery.push(src);
+          localStorage.setItem('gallery', JSON.stringify(gallery));
         };
         reader.readAsDataURL(file);
       });
@@ -232,6 +276,10 @@
       div.className = "memory-item";
       div.innerHTML = `<h3>${name}</h3><p>${content}</p>`;
       document.getElementById("message-grid").appendChild(div);
+
+      const messages = JSON.parse(localStorage.getItem('messages') || '[]');
+      messages.push({ name, content });
+      localStorage.setItem('messages', JSON.stringify(messages));
       this.reset();
     });
 
@@ -244,6 +292,8 @@
         document.getElementById("modal").style.display = "none";
       }
     };
+
+    window.onload = loadData;
   </script>
 </body>
 </html>
